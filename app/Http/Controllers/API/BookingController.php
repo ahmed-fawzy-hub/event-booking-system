@@ -74,13 +74,29 @@ public function destroy($id)
 
    // 🟢 عرض حجوزات المستخدم
    public function index()
-   {
-       $bookings = Booking::with('event')
-           ->where('user_id', Auth::id())
-           ->get();
+{
+    $bookings = Booking::with(['event', 'user'])
+        ->where('user_id', Auth::id())
+        ->get();
 
-       return response()->json($bookings);
-   }
+    return response()->json([
+        'bookings' => $bookings->map(function ($booking) {
+            return [
+                'id' => $booking->id,
+                'event' => [
+                    'id' => $booking->event->id,
+                    'title' => $booking->event->title,
+                    'date' => $booking->event->date,
+                    'location' => $booking->event->location,
+                ],
+                'user' => [
+                    'name' => $booking->user->name,
+                    'email' => $booking->user->email,
+                    'avatar_url' => $booking->user->avatar_url,
+                ],
+            ];
+        }),
+    ]);
+}
 
-   
 }

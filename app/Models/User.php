@@ -33,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
+protected $appends = ['avatar_url'];
 
     /**
      * Get the attributes that should be cast.
@@ -67,5 +68,11 @@ public function bookings()
 public function events()
 {
     return $this->belongsToMany(Event::class, 'bookings');
+}
+public function getAvatarUrlAttribute()
+{
+    return $this->avatar
+        ? asset('storage/avatars/' . $this->avatar)
+        : asset('images/default-avatar.png');
 }
 }
